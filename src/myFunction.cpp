@@ -36,6 +36,7 @@ int printScreen(void) {
 
     lcd.clear();
     lcd.noCursor();
+    lcd.noBlink();
     printUserDig(date, 2);
     lcd.print(".");
     printUserDig(month, 2);

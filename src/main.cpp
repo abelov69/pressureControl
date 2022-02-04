@@ -109,6 +109,21 @@ void loop() {
     countSETMODE = setmodeTIME / retPAUSE;
   }
 
+  if(keyPRESS == butSET && setMODE) { // отработка нажатия кнопки правки параметров
+  // первым параметром выводится пороговое давление (4 цифры)
+    if(curPOSX >= 0 && curPOSX < 4 && curPOSY == 0) {
+      int mod = 1;
+      if(curPOSX == 0) mod = 1000;
+      if(curPOSX == 1) mod = 100;
+      if(curPOSX == 2) mod = 10;
+      if(curPOSX == 3) mod = 1;
+      int dig = userP / mod;
+      dig = dig % 10 + 1;
+      if(dig > 9) dig = 0;
+      userP = userP / (mod * 10) * (mod * 10) + dig * mod + userP % mod;
+    }
+
+  }
 
   delay(300);
 

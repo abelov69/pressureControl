@@ -25,14 +25,15 @@ int printUserDig(int value, int ndig) {
  * @return int Возвращает 0 - если все Ок
  */
 int printScreen(void) {
-  if(!setMODE) {
-    int minute, hour, date, month, year;
+  int minute, hour, date, month, year;
+  minute = Clock.getMinute();
+  hour = Clock.getHour(h24, PM);
+  date = Clock.getDate();
+  month = Clock.getMonth(Century);
+  year = Clock.getYear();
 
-    minute = Clock.getMinute();
-    hour = Clock.getHour(h24, PM);
-    date = Clock.getDate();
-    month = Clock.getMonth(Century);
-    year = Clock.getYear();
+  if(!setMODE) {
+    
 
     lcd.clear();
     lcd.noCursor();
@@ -63,6 +64,17 @@ int printScreen(void) {
     lcd.cursor();
     lcd.blink();
     lcd.clear();
+    printUserDig(date, 2);
+    lcd.print(".");
+    printUserDig(month, 2);
+    lcd.print(".");
+    printUserDig(year, 2);
+    lcd.print(" ");
+    printUserDig(hour, 2);
+    lcd.print(":");
+    printUserDig(minute, 2);
+
+    lcd.setCursor(0, 1);
     printUserDig(userP, 4);
     lcd.setCursor(curPOSX, curPOSY);
   }

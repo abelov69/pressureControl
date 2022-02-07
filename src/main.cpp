@@ -17,6 +17,7 @@
  */
 
 #include <Arduino.h>
+#include <EEPROM.h>
 #include <Wire.h>
 #include <LiquidCrystal.h>
 #include "DS3231.h"
@@ -26,20 +27,10 @@
 void setup() {
   // put your setup code here, to run once:
   lcd.begin(lcdCOL, lcdROW);
-  lcd.print("Hello world!");
-  delay(2000);
 
   // Start the I2C interface
 	Wire.begin();
-  /*
-  Clock.setSecond(00);//Set the second 
-  Clock.setMinute(00);//Set the minute 
-  Clock.setHour(10);  //Set the hour 
-  Clock.setDoW(5);    //Set the day of the week
-  Clock.setDate(4);  //Set the date of the month
-  Clock.setMonth(2);  //Set the month of the year
-  Clock.setYear(22);  //Set the year (Last two digits of the year)
-  */
+ 
   // Ќастройка выводов под кнопки и реле
   pinMode(butPUMP, INPUT);
   pinMode(butLEFT, INPUT);
@@ -47,6 +38,20 @@ void setup() {
   pinMode(butSET, INPUT);
   pinMode(pinRELAY1, OUTPUT);
   pinMode(pinRELAY2, OUTPUT);
+
+  // „тение из EEPROM пользовательских данных
+  EEPROM.get(adressP_EEPROM, userP); // читаем значение порогового давлени€
+  if(userP > 1023 || userP < 0) {
+    userP = 0;
+    EEPROM.put(adressP_EEPROM, userP);
+    delay(5);
+  }
+  EEPROM.get(adressQ_EEPROM, quantEVENT); // читаем количество событий срабатывани€ по низкому давлению
+  if(quantEVENT > 99 || quantEVENT < 0) {
+    quantEVENT = 0;
+    EEPROM.put(adressQ_EEPROM, quantEVENT);
+    delay(5);
+  }
 }
 
 void loop() {
@@ -69,8 +74,12 @@ void loop() {
         keyPRESS = 0;
       }
       
-      countSETMODE--;
-      if(!countSETMODE) setMODE = false;
+      if(!countSETMODE) { // по завершению правки необходимо записать значение в пам€ть и выключить режим правки
+        setMODE = false;
+        EEPROM.put(adressP_EEPROM, userP);
+        delay(5);
+      }
+      else countSETMODE--;
       delay(retPAUSE);
       refrCount--;
     }
@@ -84,6 +93,10 @@ void loop() {
     while(!digitalRead(butPUMP)) {
       delay(retPAUSE);
     }
+    quantEVENT++;
+    if(quantEVENT > 99) quantEVENT = 0;
+    EEPROM.put(adressQ_EEPROM, quantEVENT);
+    delay(5);
     digitalWrite(pinRELAY1, LOW);
   }
 

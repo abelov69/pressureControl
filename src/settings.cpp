@@ -22,11 +22,10 @@ int lyear = 0,
 
 int curPOSX = 0;
 int curPOSY = 0;
-int keyPRESS = 0;
 
 bool setMODE = false;
 
 int quantEVENT = 0;
-int userP = 0;
+float userP = 0;
 
 int countSETMODE = 0;

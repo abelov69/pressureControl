@@ -44,7 +44,7 @@ int printScreen(void) {
     lcd.print(" ");
     printUserDig(quantEVENT, 2);
     lcd.print(" ");
-    // Читаем текущее значение давления, преобразуем его в МПа, и обрезаем до 2х знаков после запятой
+    // Р§РёС‚Р°РµРј С‚РµРєСѓС‰РµРµ Р·РЅР°С‡РµРЅРёРµ РґР°РІР»РµРЅРёСЏ, РїСЂРµРѕР±СЂР°Р·СѓРµРј РµРіРѕ РІ РњРџР°, Рё РѕР±СЂРµР·Р°РµРј РґРѕ 2С… Р·РЅР°РєРѕРІ РїРѕСЃР»Рµ Р·Р°РїСЏС‚РѕР№
     float readP = float(roundf((float(analogRead(pinPRES)) - 90) * 0.145)) / 100;
     lcd.print(readP);
   } 
@@ -71,11 +71,11 @@ int printScreen(void) {
 }
 
 int testKey(int key) {
-  if(key) {  // если указали конкретную кнопку, то проверяем ее
+  if(key) {  // РµСЃР»Рё СѓРєР°Р·Р°Р»Рё РєРѕРЅРєСЂРµС‚РЅСѓСЋ РєРЅРѕРїРєСѓ, С‚Рѕ РїСЂРѕРІРµСЂСЏРµРј РµРµ
     if(!digitalRead(key)) return key;
     return 0;
   }
-  // иначе проверяем все возможные
+  // РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј РІСЃРµ РІРѕР·РјРѕР¶РЅС‹Рµ
   if(!digitalRead(butPUMP)) return butPUMP;
   if(!digitalRead(butLEFT)) return butLEFT;
   if(!digitalRead(butRIGHT)) return butRIGHT;
@@ -84,10 +84,11 @@ int testKey(int key) {
 }
 
 int functionKey(int key) {
-  if(key == butPUMP) { // отработка нажатия кнопки принудительного запуска реле подкачки
+  if(key == butPUMP) { // РѕС‚СЂР°Р±РѕС‚РєР° РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё РїСЂРёРЅСѓРґРёС‚РµР»СЊРЅРѕРіРѕ Р·Р°РїСѓСЃРєР° СЂРµР»Рµ РїРѕРґРєР°С‡РєРё
     lcd.clear();
     lcd.print("Pump active.");
     digitalWrite(pinRELAY1, HIGH);
+    delay(50);
     while(!digitalRead(butPUMP)) {
       delay(retPAUSE);
     }
@@ -98,12 +99,12 @@ int functionKey(int key) {
     digitalWrite(pinRELAY1, LOW);
   }
 
-  if(key == butRIGHT || key == butLEFT || key == butSET) { // включает режим правки и устанавливаем таймер выхода из режима
+  if(key == butRIGHT || key == butLEFT || key == butSET) { // РІРєР»СЋС‡Р°РµС‚ СЂРµР¶РёРј РїСЂР°РІРєРё Рё СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј С‚Р°Р№РјРµСЂ РІС‹С…РѕРґР° РёР· СЂРµР¶РёРјР°
     setMODE = true;
     countSETMODE = setmodeTIME / waitKey;
   }
 
-  if(key == butRIGHT) { // отработка нажатия кнопки перемещения курсора вправо
+  if(key == butRIGHT) { // РѕС‚СЂР°Р±РѕС‚РєР° РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё РїРµСЂРµРјРµС‰РµРЅРёСЏ РєСѓСЂСЃРѕСЂР° РІРїСЂР°РІРѕ
     curPOSX++;
     if(curPOSX >= lcdCOL) { 
       curPOSX = 0;
@@ -112,7 +113,7 @@ int functionKey(int key) {
     if(curPOSY >= lcdROW) curPOSY = 0;
   }
 
-  if(key == butLEFT) { // отработка нажатия кнопки перемещения курсора влево
+  if(key == butLEFT) { // РѕС‚СЂР°Р±РѕС‚РєР° РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё РїРµСЂРµРјРµС‰РµРЅРёСЏ РєСѓСЂСЃРѕСЂР° РІР»РµРІРѕ
     curPOSX--;
     if(curPOSX < 0) {
       curPOSX = lcdCOL - 1;
@@ -121,55 +122,55 @@ int functionKey(int key) {
     if(curPOSY < 0) curPOSY = lcdROW - 1;
   }
 
-  if(key == butSET && setMODE) { // отработка нажатия кнопки правки параметров
-    // первым параметром выводится дата (dd.mm.yy), потом время (hh:mm), на второй строке пороговое давление (4 цифры)
+  if(key == butSET && setMODE) { // РѕС‚СЂР°Р±РѕС‚РєР° РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё РїСЂР°РІРєРё РїР°СЂР°РјРµС‚СЂРѕРІ
+    // РїРµСЂРІС‹Рј РїР°СЂР°РјРµС‚СЂРѕРј РІС‹РІРѕРґРёС‚СЃСЏ РґР°С‚Р° (dd.mm.yy), РїРѕС‚РѕРј РІСЂРµРјСЏ (hh:mm), РЅР° РІС‚РѕСЂРѕР№ СЃС‚СЂРѕРєРµ РїРѕСЂРѕРіРѕРІРѕРµ РґР°РІР»РµРЅРёРµ (4 С†РёС„СЂС‹)
     if(curPOSY == 0) {
-      if(curPOSX == 0) { // вторая цифра числа (дата)
+      if(curPOSX == 0) { // РІС‚РѕСЂР°СЏ С†РёС„СЂР° С‡РёСЃР»Р° (РґР°С‚Р°)
         int date = Clock.getDate() + 10;
         if(date > 31) date = 0;
         Clock.setDate(date);
       }
-      if(curPOSX == 1) { // первая цифра числа (дата)
+      if(curPOSX == 1) { // РїРµСЂРІР°СЏ С†РёС„СЂР° С‡РёСЃР»Р° (РґР°С‚Р°)
         int dig = Clock.getDate() + 1;        
         if(dig > 31) dig = 0;
         Clock.setDate(dig);
       }
-      if(curPOSX == 3) { // вторая цифра месяца (дата)
+      if(curPOSX == 3) { // РІС‚РѕСЂР°СЏ С†РёС„СЂР° РјРµСЃСЏС†Р° (РґР°С‚Р°)
         int month = Clock.getMonth(Century) + 10;
         if(month > 12) month = 0;
         Clock.setMonth(month);
       }
-      if(curPOSX == 4) { // первая цифра месяца (дата)
+      if(curPOSX == 4) { // РїРµСЂРІР°СЏ С†РёС„СЂР° РјРµСЃСЏС†Р° (РґР°С‚Р°)
         int month = Clock.getMonth(Century) + 1;        
         if(month > 12) month = 0;
         Clock.setMonth(month);
       }
-      if(curPOSX == 6) { // вторая цифра года (дата)
+      if(curPOSX == 6) { // РІС‚РѕСЂР°СЏ С†РёС„СЂР° РіРѕРґР° (РґР°С‚Р°)
         int year = Clock.getYear() + 10;
         if(year > 99) year = 0;
         Clock.setYear(year);
       }
-      if(curPOSX == 7) { // первая цифра года (дата)
+      if(curPOSX == 7) { // РїРµСЂРІР°СЏ С†РёС„СЂР° РіРѕРґР° (РґР°С‚Р°)
         int year = Clock.getYear() + 1;        
         if(year > 99) year = 0;
         Clock.setYear(year);
       }
-      if(curPOSX == 9) { // вторая цифра часа (время)
+      if(curPOSX == 9) { // РІС‚РѕСЂР°СЏ С†РёС„СЂР° С‡Р°СЃР° (РІСЂРµРјСЏ)
         int hour = Clock.getHour(h24, PM) + 10;
         if(hour > 24) hour = 0;
         Clock.setHour(hour);
       }
-      if(curPOSX == 10) { // первая цифра часа (время)
+      if(curPOSX == 10) { // РїРµСЂРІР°СЏ С†РёС„СЂР° С‡Р°СЃР° (РІСЂРµРјСЏ)
         int hour = Clock.getHour(h24, PM) + 1;        
         if(hour > 24) hour = 0;
         Clock.setHour(hour);
       }
-      if(curPOSX == 12) { // вторая цифра минут (время)
+      if(curPOSX == 12) { // РІС‚РѕСЂР°СЏ С†РёС„СЂР° РјРёРЅСѓС‚ (РІСЂРµРјСЏ)
         int minute = Clock.getMinute() + 10;
         if(minute > 59) minute = 0;
         Clock.setMinute(minute);
       }
-      if(curPOSX == 13) { // первая цифра минут (время)
+      if(curPOSX == 13) { // РїРµСЂРІР°СЏ С†РёС„СЂР° РјРёРЅСѓС‚ (РІСЂРµРјСЏ)
         int minute = Clock.getMinute() + 1;        
         if(minute > 59) minute = 0;
         Clock.setMinute(minute);
